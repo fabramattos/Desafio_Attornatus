@@ -27,8 +27,9 @@ public class SwaggerConfig {
                                 Para acessar diretamente o banco em memoria H2:
 
                                 - *http://localhost:8080/h2-console*
-                                - **usuario: sa**
-                                - **senha: root**
+                                - **JDBC URL: jdbc:h2:mem:dev-db**
+                                - **User Name: sa**
+                                - **Password: root**
                                 """
                         )
                         .contact(new Contact()

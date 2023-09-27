@@ -38,8 +38,7 @@ public class EnderecoService {
         var enderecosDaPessoa = listarPorPessoa(idPessoa);
 
         enderecosDaPessoa.forEach(it -> it.setPrincipal(it.getId().equals(idEnderecoFav)));
-
-        return repository.saveAll(enderecosDaPessoa);
+        return enderecosDaPessoa;
     }
 
     public List<Endereco> listarPorPessoa(Long idPessoa){

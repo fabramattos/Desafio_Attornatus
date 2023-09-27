@@ -28,20 +28,16 @@ public class Pessoa {
 
 
     public Pessoa(FormCadastroPessoa form) {
-        var endereco = new Endereco(form.endereco(), this);
-        endereco.setPrincipal(true); // Cadastro novo obriga criação de endereço, o marca como favorito por padrão.
-
         nome = form.nome();
         dataNascimento = form.dataNascimento();
-        enderecos.add(endereco);
     }
 
-    public void atualiza(FormAtualizacaoPessoa form){
+    public Pessoa atualiza(FormAtualizacaoPessoa form){
         if(form.nome() != null)
-            nome = form.nome();
+            this.nome = form.nome();
         if(form.dataNascimento() != null)
-            dataNascimento = form.dataNascimento();
+            this.dataNascimento = form.dataNascimento();
+        return this;
     }
-
 }
 

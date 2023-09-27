@@ -21,9 +21,7 @@ public class PessoaService {
 
     public Pessoa editar(FormAtualizacaoPessoa form){
         var pessoa = buscar(form.id());
-
-        pessoa.atualiza(form);
-        return repository.save(pessoa);
+        return pessoa.atualiza(form);
     }
 
     public Pessoa buscar(Long id){

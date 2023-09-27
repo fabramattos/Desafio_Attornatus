@@ -6,6 +6,7 @@ import br.com.attornatus.api.service.EnderecoService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.util.UriComponentsBuilder;
 
@@ -19,6 +20,7 @@ public class EnderecoController {
     EnderecoService service;
 
     @PostMapping
+    @Transactional
     public ResponseEntity<ViewEndereco> cadastrar(@RequestBody @Valid FormCadastroEndereco form, UriComponentsBuilder uriBuilder) {
         var endereco = service.cadastrar(form);
         var uri = uriBuilder.path("endereco/{id}").buildAndExpand(endereco.getId()).toUri();
@@ -35,6 +37,7 @@ public class EnderecoController {
     }
 
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<List<ViewEndereco>> favoritar(@PathVariable Long id) {
         return ResponseEntity.ok(service
                 .favoritarEndereco(id)
