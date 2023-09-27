@@ -4,15 +4,31 @@ spring:
     url: jdbc:h2:mem:testdb?createDatabaseIfNotExist=true
     username: sa
     password: root
+
+  data:
+    web:
+      pageable:
+        page-parameter: page
+
   h2:
     console:
       enabled: true
+
   jpa:
     defer-datasource-initialization: true
-    hibernate:
-      ddl-auto: update
+    properties:
+      hibernate:
+        show-sql: true
+        format_sql: true
+        ddl-auto: update
 
 h2:
   console:
     settings:
-      web-allow-others: false
+      web-allow-others: false]
+
+logging:
+  level:
+    org:
+      springframework:
+        :web: DEBUG
