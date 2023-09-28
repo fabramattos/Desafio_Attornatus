@@ -3,72 +3,89 @@ package br.com.attornatus.api.service;
 import br.com.attornatus.api.domain.pessoa.FormAtualizacaoPessoa;
 import br.com.attornatus.api.domain.pessoa.FormCadastroPessoa;
 import br.com.attornatus.api.domain.pessoa.Pessoa;
-import br.com.attornatus.api.domain.pessoa.PessoaRepository;
 import br.com.attornatus.api.infra.exceptions.IdPessoaInvalidoException;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.ActiveProfiles;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDate;
-import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
+@Transactional
 @ActiveProfiles("test")
 class PessoaServiceTest {
-
-    @MockBean
-    private PessoaRepository repository;
 
     @Autowired
     private PessoaService service;
 
-    private static final FormCadastroPessoa FORM_CADASTRO_PESSOA = new FormCadastroPessoa("Melon Husk", LocalDate.now());
-    private static final Pessoa PESSOA_ESPERADA = new Pessoa(FORM_CADASTRO_PESSOA);
+    private Pessoa pessoaCadastrada;
 
-    @Test
-    @DisplayName("Dado um DTO válido para cadastro, Quando solicitado, Deve cadastrar uma pessoa")
-    void cadastrar1() {
-        var pessoaEsperada = new Pessoa(FORM_CADASTRO_PESSOA);
-        when(repository.save(any()))
-                .thenReturn(pessoaEsperada);
-
-        var pessoaSalva = service.cadastrar(FORM_CADASTRO_PESSOA);
-
-        verify(repository, times(1)).save(any());
-        assertEquals(pessoaEsperada, pessoaSalva);
+    @BeforeEach
+    void setup(){
+        pessoaCadastrada = service.cadastrar(new FormCadastroPessoa("Melon Husk", LocalDate.now()));
     }
 
     @Test
-    @DisplayName("Dado um DTO inválido para cadastro, Quando solicitado, Deve lançar exception")
+    @DisplayName("Dado um DTO válido, Quando tentar cadastrar, Deve cadastrar uma pessoa")
+    void cadastrar1() {
+        var dtoNovoCadastro = new FormCadastroPessoa("Reanu Keaves", LocalDate.now());
+        var novoDadastro = service.cadastrar(dtoNovoCadastro);
+
+        assertNotNull(novoDadastro);
+        assertEquals(dtoNovoCadastro.nome(), novoDadastro.getNome());
+        assertEquals(dtoNovoCadastro.dataNascimento(), novoDadastro.getDataNascimento());
+        assertTrue(novoDadastro.getEnderecos().isEmpty());
+    }
+
+    @Test
+    @DisplayName("Dado um DTO inválido, Quando tentar cadastrar, Deve lançar exception")
     void cadastrar2() {
         //TODO criar tratamento de erro para validations do DTO
     }
 
     @Test
-    @DisplayName("Dado um DTO válido para atualização, Quando solicitado, Deve alterar dados da pessoa")
+    @DisplayName("Dado um ID e DTO válido, Quando tentar atualizar Pessoa, Deve atualizar dados da pessoa")
     void editar1() {
-        when(repository.findById(anyLong()))
-                .thenReturn(Optional.of(PESSOA_ESPERADA));
+        var pessoaEditada = service.editar(pessoaCadastrada.getId(), new FormAtualizacaoPessoa("Nome Alterado", null));
 
-        var pessoaEditada = service.editar(new FormAtualizacaoPessoa(1L, "Nome Alterado", null));
-
-        verify(repository, times(1)).findById(anyLong());
         assertEquals("Nome Alterado", pessoaEditada.getNome());
+        assertEquals(pessoaCadastrada.getDataNascimento(), pessoaEditada.getDataNascimento());
     }
 
     @Test
-    @DisplayName("Dado um DTO inválido para atualização, Quando solicitado, Deve lançar exception")
+    @DisplayName("Dado um id inválido, Quando tentar editar Pessoa,Deve lançar exception")
     void editar2() {
-        when(repository.findById(anyLong()))
-                .thenReturn(Optional.empty());
+        assertThrows(
+                IdPessoaInvalidoException.class,
+                () -> service.editar(-1L, new FormAtualizacaoPessoa("Nome Alterado", null))
+        );
+    }
 
-        assertThrows(IdPessoaInvalidoException.class, () -> service.buscar(111L));
+    @Test
+    @DisplayName("Dado um id válido, Quando tentar consultar, Deve retornar Pessoa")
+    void consultar1() {
+        var consulta = service.buscar(pessoaCadastrada.getId());
+
+        assertNotNull(consulta);
+        assertEquals(pessoaCadastrada, consulta);
+    }
+
+    @Test
+    @DisplayName("Dado um id inválido, Quando tentar consultar, Deve lançar exception")
+    void consultar2() {
+        assertThrows(IdPessoaInvalidoException.class, () -> service.buscar(-1L));
+    }
+
+    @Test
+    @DisplayName("Quando solicitar pessoas, Deve retornar lista")
+    void listar() {
+        assertNotNull(service.listar(Pageable.ofSize(10)));
     }
 }

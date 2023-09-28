@@ -10,8 +10,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class PessoaService {
     @Autowired
@@ -37,7 +35,4 @@ public class PessoaService {
         return repository.findAll(page);
     }
 
-    public List<Pessoa> listar(){
-        return repository.findAll();
-    }
 }
