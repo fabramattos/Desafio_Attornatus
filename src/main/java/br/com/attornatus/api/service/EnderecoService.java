@@ -16,12 +16,12 @@ public class EnderecoService {
     @Autowired
     PessoaService pessoaService;
 
-    public Endereco cadastrar(FormCadastroEndereco form){
-        var pessoa = pessoaService.buscar(form.idPessoa());
+    public Endereco cadastrar(Long idPessoa, FormCadastroEndereco form){
+        var pessoa = pessoaService.buscar(idPessoa);
         var endereco = new Endereco(form, pessoa);
         
         if(endereco.getPrincipal())
-            desmarcaFavoritoDoUsuario(form.idPessoa());
+            desmarcaFavoritoDoUsuario(idPessoa);
 
         return repository.save(new Endereco(form, pessoa));
     }
@@ -34,9 +34,15 @@ public class EnderecoService {
         });
     }
 
-    public List<Endereco> favoritarEndereco(Long idEnderecoFav){
-        var idPessoa = busca(idEnderecoFav).getPessoa().getId();
+    public List<Endereco> favoritarEndereco(Long idPessoa, Long idEnderecoFav){
         var enderecosDaPessoa = listarPorPessoa(idPessoa);
+
+        var contemEndereco = enderecosDaPessoa
+                .stream()
+                .anyMatch(it -> it.getId().equals(idEnderecoFav));
+
+        if(!contemEndereco)
+            throw new IdEnderecoInvalidoException();
 
         enderecosDaPessoa.forEach(it -> it.setPrincipal(it.getId().equals(idEnderecoFav)));
         return enderecosDaPessoa;
@@ -48,9 +54,4 @@ public class EnderecoService {
         return repository.findAllByPessoaId(idPessoa);
     }
 
-    private Endereco busca(Long id){
-        return repository
-                .findById(id)
-                .orElseThrow(IdEnderecoInvalidoException::new);
-    }
 }

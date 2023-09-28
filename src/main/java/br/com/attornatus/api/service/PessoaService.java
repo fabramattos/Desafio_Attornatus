@@ -10,6 +10,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class PessoaService {
     @Autowired
@@ -20,8 +22,8 @@ public class PessoaService {
         return repository.save(pessoa);
     }
 
-    public Pessoa editar(FormAtualizacaoPessoa form){
-        var pessoa = buscar(form.id());
+    public Pessoa editar(Long id, FormAtualizacaoPessoa form){
+        var pessoa = buscar(id);
         return pessoa.atualiza(form);
     }
 
@@ -33,5 +35,9 @@ public class PessoaService {
 
     public Page<Pessoa> listar(Pageable page){
         return repository.findAll(page);
+    }
+
+    public List<Pessoa> listar(){
+        return repository.findAll();
     }
 }

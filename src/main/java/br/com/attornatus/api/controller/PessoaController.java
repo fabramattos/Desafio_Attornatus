@@ -26,10 +26,10 @@ public class PessoaController {
         return ResponseEntity.created(uri).body(new ViewPessoaDetalhado(pessoa));
     }
 
-    @PutMapping
+    @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<ViewPessoaDetalhado> atualizar(@RequestBody @Valid FormAtualizacaoPessoa form) {
-        var pessoa = service.editar(form);
+    public ResponseEntity<ViewPessoaDetalhado> atualizar(@RequestBody @Valid FormAtualizacaoPessoa form, @PathVariable Long id) {
+        var pessoa = service.editar(id, form);
         return ResponseEntity.ok(new ViewPessoaDetalhado(pessoa));
     }
 

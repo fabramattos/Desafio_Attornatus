@@ -19,11 +19,13 @@ public class EnderecoController {
     @Autowired
     EnderecoService service;
 
-    @PostMapping
+    @PostMapping("/{idPessoa}")
     @Transactional
-    public ResponseEntity<ViewEndereco> cadastrar(@RequestBody @Valid FormCadastroEndereco form, UriComponentsBuilder uriBuilder) {
-        var endereco = service.cadastrar(form);
-        var uri = uriBuilder.path("endereco/{id}").buildAndExpand(endereco.getId()).toUri();
+    public ResponseEntity<ViewEndereco> cadastrar(@RequestBody @Valid FormCadastroEndereco form,
+                                                  @PathVariable Long idPessoa,
+                                                  UriComponentsBuilder uriBuilder) {
+        var endereco = service.cadastrar(idPessoa, form);
+        var uri = uriBuilder.path("endereco/"+idPessoa+"/{idEndereco}").buildAndExpand(endereco.getId()).toUri();
         return ResponseEntity.created(uri).body(new ViewEndereco(endereco));
     }
 
@@ -36,11 +38,12 @@ public class EnderecoController {
                 .toList());
     }
 
-    @PutMapping("/{id}")
+    @PutMapping("/{idPessoa}/{idEndereco}")
     @Transactional
-    public ResponseEntity<List<ViewEndereco>> favoritar(@PathVariable Long id) {
+    public ResponseEntity<List<ViewEndereco>> favoritar(@PathVariable Long idPessoa,
+                                                        @PathVariable Long idEndereco) {
         return ResponseEntity.ok(service
-                .favoritarEndereco(id)
+                .favoritarEndereco(idPessoa, idEndereco)
                 .stream()
                 .map(ViewEndereco::new)
                 .toList());
