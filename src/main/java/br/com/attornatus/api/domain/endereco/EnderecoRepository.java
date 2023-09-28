@@ -10,5 +10,5 @@ import java.util.Optional;
 public interface EnderecoRepository extends JpaRepository<Endereco, Long> {
 
     @Query("SELECT e FROM Endereco e WHERE e.pessoa.id = :idPessoa")
-    Optional<List<Endereco>> findAllByPessoaId(@Param("idPessoa") Long idPessoa);
+    List<Endereco> findAllByPessoaId(@Param("idPessoa") Long idPessoa);
 }

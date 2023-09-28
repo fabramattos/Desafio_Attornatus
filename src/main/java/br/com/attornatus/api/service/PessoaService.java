@@ -4,6 +4,7 @@ import br.com.attornatus.api.domain.pessoa.FormAtualizacaoPessoa;
 import br.com.attornatus.api.domain.pessoa.FormCadastroPessoa;
 import br.com.attornatus.api.domain.pessoa.Pessoa;
 import br.com.attornatus.api.domain.pessoa.PessoaRepository;
+import br.com.attornatus.api.infra.exceptions.IdPessoaInvalidoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +28,7 @@ public class PessoaService {
     public Pessoa buscar(Long id){
         return repository
                 .findById(id)
-                .orElseThrow();
+                .orElseThrow(IdPessoaInvalidoException::new);
     }
 
     public Page<Pessoa> listar(Pageable page){

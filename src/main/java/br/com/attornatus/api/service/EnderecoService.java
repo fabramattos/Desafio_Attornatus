@@ -1,8 +1,9 @@
 package br.com.attornatus.api.service;
 
-import br.com.attornatus.api.domain.endereco.FormCadastroEndereco;
 import br.com.attornatus.api.domain.endereco.Endereco;
 import br.com.attornatus.api.domain.endereco.EnderecoRepository;
+import br.com.attornatus.api.domain.endereco.FormCadastroEndereco;
+import br.com.attornatus.api.infra.exceptions.IdEnderecoInvalidoException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -42,14 +43,14 @@ public class EnderecoService {
     }
 
     public List<Endereco> listarPorPessoa(Long idPessoa){
-        return repository
-                .findAllByPessoaId(idPessoa)
-                .orElseThrow();
+        pessoaService.buscar(idPessoa);
+
+        return repository.findAllByPessoaId(idPessoa);
     }
 
     private Endereco busca(Long id){
         return repository
                 .findById(id)
-                .orElseThrow();
+                .orElseThrow(IdEnderecoInvalidoException::new);
     }
 }
