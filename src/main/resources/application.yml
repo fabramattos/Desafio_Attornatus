@@ -10,25 +10,22 @@ spring:
       pageable:
         page-parameter: page
 
-  h2:
-    console:
-      enabled: true
-
   jpa:
     defer-datasource-initialization: true
+    ddl-auto: create-drop
+    show-sql: true
     properties:
       hibernate:
-        show-sql: true
         format_sql: true
-        ddl-auto: update
 
 h2:
   console:
+    enabled: true
     settings:
-      web-allow-others: false]
+      web-allow-others: false
 
 logging:
   level:
     org:
       springframework:
-        :web: DEBUG
+        web: DEBUG
