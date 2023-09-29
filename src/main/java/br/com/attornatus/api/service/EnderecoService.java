@@ -19,19 +19,11 @@ public class EnderecoService {
     public Endereco cadastrar(Long idPessoa, FormCadastroEndereco form){
         var pessoa = pessoaService.buscar(idPessoa);
         var endereco = new Endereco(form, pessoa);
-        
-        if(endereco.getPrincipal())
-            desmarcaFavoritoDoUsuario(idPessoa);
 
-        return repository.save(new Endereco(form, pessoa));
-    }
+        if(listarPorPessoa(idPessoa).isEmpty())
+            endereco.setPrincipal(true);
 
-    private void desmarcaFavoritoDoUsuario(Long idPessoa) {
-        var enderecos = listarPorPessoa(idPessoa);
-        enderecos.forEach(it -> {
-            it.setPrincipal(false);
-            repository.save(it);
-        });
+        return repository.save(endereco);
     }
 
     public List<Endereco> favoritarEndereco(Long idPessoa, Long idEnderecoFav){

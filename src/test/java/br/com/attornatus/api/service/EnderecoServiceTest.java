@@ -36,9 +36,22 @@ class EnderecoServiceTest {
     }
 
     @Test
+    @DisplayName("""
+                Dado um ID e DTO válido com 'principal = false',
+                Quando tentar cadastrar como primeiro endereço,
+                Deve criar endereço para usuario com  'principal = true'
+                """)
+    void cadastrar0() {
+        var dtoEndereco = dtoCadastroEndereco(1);
+        var enderecoCadastrado = enderecoService.cadastrar(pessoaCadastrada.getId(), dtoEndereco);
+
+        assertTrue(enderecoCadastrado.getPrincipal());
+    }
+
+    @Test
     @DisplayName("Dado um ID e DTO válido, Quando tentar cadastrar, Deve criar endereço para usuario")
     void cadastrar1() {
-        var dtoEndereco = formCadastroEndereco(1);
+        var dtoEndereco = dtoCadastroEndereco(1);
         var enderecoCadastrado = enderecoService.cadastrar(pessoaCadastrada.getId(), dtoEndereco);
 
         assertNotNull(enderecoCadastrado);
@@ -46,7 +59,7 @@ class EnderecoServiceTest {
         assertEquals(dtoEndereco.cidade(), enderecoCadastrado.getCidade());
         assertEquals(dtoEndereco.logradouro(), enderecoCadastrado.getLogradouro());
         assertEquals(dtoEndereco.numero(), enderecoCadastrado.getNumero());
-        assertEquals(dtoEndereco.principal(), enderecoCadastrado.getPrincipal());
+        assertTrue(enderecoCadastrado.getPrincipal());
     }
 
     @Test
@@ -54,7 +67,7 @@ class EnderecoServiceTest {
     void cadastrar2() {
         assertThrows(
                 IdPessoaInvalidoException.class,
-                () -> enderecoService.cadastrar(-1L, formCadastroEndereco(1))
+                () -> enderecoService.cadastrar(-1L, dtoCadastroEndereco(1))
         );
     }
 
@@ -76,20 +89,41 @@ class EnderecoServiceTest {
         );
     }
 
+    @Test
+    @DisplayName("Dado um idPessoa e idEndereco válidos, Quando tentar favoritar endereço, Deve lançar alterar o principal")
+    void favoritarEndereco3() {
+        var idPessoa = pessoaCadastrada.getId();
+        var endereco1 = enderecoService.cadastrar(idPessoa, dtoCadastroEndereco(1));
+        var endereco2 = enderecoService.cadastrar(idPessoa, dtoCadastroEndereco(2));
+        var endereco3 = enderecoService.cadastrar(idPessoa, dtoCadastroEndereco(3));
+
+        assertTrue(endereco1.getPrincipal());
+        assertFalse(endereco2.getPrincipal());
+        assertFalse(endereco3.getPrincipal());
+
+        enderecoService.favoritarEndereco(idPessoa, endereco2.getId());
+
+        assertFalse(endereco1.getPrincipal());
+        assertTrue(endereco2.getPrincipal());
+        assertFalse(endereco3.getPrincipal());
+
+        assertEquals(3, enderecoService.listarPorPessoa(idPessoa).size());
+    }
+
 
     @Test
     @DisplayName("Dado um id válido de pessoa, Quando solicitado, Deve retornar todos endereços atrelados à pessoa")
     void listarPorPessoa() {
-        enderecoService.cadastrar(pessoaCadastrada.getId(), formCadastroEndereco(1));
-        enderecoService.cadastrar(pessoaCadastrada.getId(), formCadastroEndereco(2));
-        enderecoService.cadastrar(pessoaCadastrada.getId(), formCadastroEndereco(3));
+        enderecoService.cadastrar(pessoaCadastrada.getId(), dtoCadastroEndereco(1));
+        enderecoService.cadastrar(pessoaCadastrada.getId(), dtoCadastroEndereco(2));
+        enderecoService.cadastrar(pessoaCadastrada.getId(), dtoCadastroEndereco(3));
 
         var enderecos = enderecoService.listarPorPessoa(pessoaCadastrada.getId());
 
         assertEquals(3, enderecos.size());
     }
 
-    private FormCadastroEndereco formCadastroEndereco(Integer numero) {
+    private FormCadastroEndereco dtoCadastroEndereco(Integer numero) {
         return new FormCadastroEndereco(
                 "12345000",
                 "Cidade",
