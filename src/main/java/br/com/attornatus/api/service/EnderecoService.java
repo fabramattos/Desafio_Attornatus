@@ -23,6 +23,7 @@ public class EnderecoService {
         if(listarPorPessoa(idPessoa).isEmpty())
             endereco.setPrincipal(true);
 
+        pessoa.getEnderecos().add(endereco);
         return repository.save(endereco);
     }
 
