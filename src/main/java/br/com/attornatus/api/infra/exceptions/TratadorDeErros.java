@@ -9,17 +9,17 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 public class TratadorDeErros {
 
     @ExceptionHandler(IdPessoaInvalidoException.class)
-    public ResponseEntity<ViewException> tratarIdPessoaInvalidos() {
-        return ResponseEntity.badRequest().body(new ViewException("id da pessoa inválido"));
+    public ResponseEntity<ViewException> tratarIdPessoaInvalidos(IdPessoaInvalidoException e) {
+        return ResponseEntity.badRequest().body(new ViewException(e));
     }
 
     @ExceptionHandler(IdEnderecoInvalidoException.class)
-    public ResponseEntity<ViewException> tratarIdsEnderecoInvalidos() {
-        return ResponseEntity.badRequest().body(new ViewException("id do endereço inválido"));
+    public ResponseEntity<ViewException> tratarIdsEnderecoInvalidos(IdEnderecoInvalidoException e) {
+        return ResponseEntity.badRequest().body(new ViewException(e));
     }
 
     @ExceptionHandler(EntityNotFoundException.class)
-    public ResponseEntity<EntityNotFoundException> tratarErro404() {
+    public ResponseEntity<EntityNotFoundException> tratarErro404(EntityNotFoundException e) {
         return ResponseEntity.notFound().build();
     }
 
