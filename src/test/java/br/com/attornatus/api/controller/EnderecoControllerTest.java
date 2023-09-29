@@ -1,6 +1,5 @@
 package br.com.attornatus.api.controller;
 
-import br.com.attornatus.api.domain.endereco.Endereco;
 import br.com.attornatus.api.domain.endereco.FormCadastroEndereco;
 import br.com.attornatus.api.domain.pessoa.FormCadastroPessoa;
 import br.com.attornatus.api.domain.pessoa.Pessoa;
