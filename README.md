@@ -35,8 +35,17 @@ Uma Pessoa deve ter os seguintes campos:
 - Testes unitários
 - Clean Code
 
+## Como Executar
+A api pode ser lançada direto pela IDE apenas executando a Main.
+Apos em execução, ficará disponivel na porta 8080, podendo ser testata com Postman:
+ - http://localhost:8080/(endpoints)
+Para testar utilizando o Swagger:
+ - [Link Swagger Ui](http://localhost:8080/swagger-ui/)
+
 ## TODO
 Passos que considero interessantes para incrementar a api se houvesse tempo:
  - implementar verificações nos testes para checar o json recebido nas Response da API
  - security
  - tratar erros lançados pelo Bean Validate  e retornar em json para o usuario
+ - pipeline CI/CD para rodar testes em branches antes de realizar merge na master
+ - deploy em algum servidor (Railway.app?)
